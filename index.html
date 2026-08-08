@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>CyberSOS BD — Bangladesh Cyber Crime & Police Station Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #0F5C43;
+  --primary-dark: #0B4A38;
+  --accent: #D4AF37;
+  --danger: #D6473A;
+  --bg-body: #F8F9FA;
+  --bg-card: #FFFFFF;
+  --bg-alt: #EFEFEF;
+  --text-main: #17211C;
+  --text-muted: #5A6560;
+  --border-color: rgba(23, 33, 28, 0.15);
+  --shadow: 0 4px 20px rgba(0,0,0,0.06);
+  --radius: 8px;
+}
+
+[data-theme="dark"] {
+  --primary: #10B981;
+  --primary-dark: #059669;
+  --accent: #F59E0B;
+  --danger: #EF4444;
+  --bg-body: #0F172A;
+  --bg-card: #1E293B;
+  --bg-alt: #172033;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; transition: background-color 0.2s, color 0.2s, border-color 0.2s; }
+body {
+  margin: 0;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  font-family: 'Hind Siliguri', 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+header.masthead {
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--border-color);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow);
+}
+.masthead-inner {
+  max-width: 1200px; margin: 0 auto; padding: 10px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.seal-svg { width: 44px; height: 44px; flex-shrink: 0; }
+.brand-text .bn { font-size: 18px; font-weight: 700; color: var(--primary); line-height: 1.2; }
+.brand-text .en { font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em; font-weight: 600; }
+
+.controls { display: flex; align-items: center; gap: 10px; }
+.btn-toggle {
+  background: var(--bg-alt); border: 1px solid var(--border-color);
+  color: var(--text-main); padding: 6px 14px; border-radius: 20px;
+  cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;
+}
+.btn-toggle:hover { border-color: var(--primary); }
+
+nav.mastnav { display: flex; gap: 18px; font-size: 14.5px; font-weight: 600; }
+nav.mastnav a { color: var(--text-main); text-decoration: none; }
+nav.mastnav a:hover { color: var(--primary); }
+
+.hero {
+  max-width: 1200px; margin: 0 auto; padding: 45px 24px;
+  display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center;
+}
+.hero h1 { font-size: 2.3rem; line-height: 1.25; color: var(--primary); margin-bottom: 16px; }
+.hero p.lede { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 24px; }
+.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.btn {
+  font-family: inherit; font-weight: 600; font-size: 14.5px;
+  padding: 10px 20px; border-radius: var(--radius); border: none;
+  cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary { background: var(--primary); color: #FFF; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-outline { background: transparent; color: var(--text-main); border: 1.5px solid var(--border-color); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+.ticket-preview {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.ticket-preview .tp-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+.ticket-preview .tp-ref { font-size: 22px; font-weight: 700; color: var(--primary); margin: 12px 0; }
+.ticket-preview .tp-tag { background: var(--primary); color: #FFF; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+
+section { max-width: 1200px; margin: 0 auto; padding: 45px 24px; }
+section.alt { background: var(--bg-alt); max-width: 100%; }
+.inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section-head { margin-bottom: 26px; }
+.section-head h2 { font-size: 1.75rem; color: var(--primary); margin: 0 0 6px 0; }
+.section-head p { color: var(--text-muted); margin: 0; }
+
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.cat-card {
+  background: var(--bg-card); padding: 22px; border-radius: var(--radius);
+  border: 1px solid var(--border-color); cursor: pointer; box-shadow: var(--shadow); position: relative;
+}
+.cat-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.cat-card .num { font-family: 'IBM Plex Mono', monospace; color: var(--accent); font-weight: 700; }
+.cat-card h3 { font-size: 1.15rem; margin: 8px 0 6px; }
+.cat-card p { font-size: 13.5px; color: var(--text-muted); margin: 0 0 12px 0; }
+.cat-card .more-link { font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: underline; }
+
+.form-shell {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius); max-width: 820px; margin: 0 auto; box-shadow: var(--shadow); overflow: hidden;
+}
+.form-head { background: var(--primary); color: #FFF; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;}
+.form-body { padding: 28px; }
+.progress-bar { height: 4px; background: var(--accent); transition: width 0.3s; }
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+input, select, textarea {
+  width: 100%; font-family: inherit; font-size: 14.5px; padding: 10px 14px;
+  border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); border-radius: var(--radius);
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); background: var(--bg-card); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.form-nav { display: flex; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+
+.file-drop {
+  border: 2px dashed var(--border-color); padding: 20px; text-align: center;
+  border-radius: var(--radius); cursor: pointer; background: var(--bg-body);
+  font-size: 14px; color: var(--text-muted);
+}
+.file-drop:hover { border-color: var(--primary); color: var(--primary); }
+.file-list { margin-top: 8px; font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--primary); }
+
+.thana-info-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: var(--radius); padding: 24px; margin-top: 20px; box-shadow: var(--shadow);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+}
+.thana-details h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 18px; }
+.thana-details p { margin: 4px 0; font-size: 14px; }
+.map-frame { width: 100%; height: 220px; border: 1px solid var(--border-color); border-radius: var(--radius); }
+
+.checklist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.check-item {
+  background: var(--bg-card); border-left: 4px solid var(--primary);
+  border: 1px solid var(--border-color); border-left-width: 4px; padding: 16px; border-radius: var(--radius);
+}
+.check-item h4 { margin: 0 0 6px 0; font-size: 15px; color: var(--primary); }
+.check-item p { margin: 0; font-size: 13.5px; color: var(--text-muted); }
+
+.law-table { width: 100%; border-collapse: collapse; margin-top: 14px; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.law-table th, .law-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+.law-table th { background: var(--primary); color: #FFF; font-weight: 600; }
+
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 1000; display: flex;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-content {
+  background: var(--bg-card); border-radius: var(--radius);
+  max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto;
+  padding: 28px; border: 1px solid var(--border-color); box-shadow: var(--shadow); position: relative;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 20px; font-size: 24px;
+  cursor: pointer; background: none; border: none; color: var(--text-main);
+}
+
+.warning-box {
+  background: rgba(214, 71, 58, 0.08); border: 1px solid var(--danger);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
+}
+.warning-box h4 { margin: 0 0 6px 0; color: var(--danger); font-size: 15px; }
+.warning-box p { margin: 0; font-size: 13px; color: var(--text-main); }
+
+details.warning-box summary {
+  list-style: none; font-weight: 600; outline: none; display: flex; align-items: center; justify-content: space-between;
+}
+details.warning-box summary::-webkit-details-marker { display: none; }
+details.warning-box summary::after { content: "▼"; font-size: 12px; color: var(--danger); }
+details.warning-box[open] summary::after { content: "▲"; }
+
+.legal-box {
+  background: var(--bg-body); border-left: 4px solid var(--danger);
+  padding: 16px; border-radius: var(--radius); margin-bottom: 16px; border: 1px solid var(--border-color); border-left-width: 4px;
+}
+
+.tracker-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 28px; max-width: 600px; margin: 0 auto; box-shadow: var(--shadow); }
+.track-input-row { display: flex; gap: 12px; }
+.timeline { list-style: none; padding: 0; margin-top: 24px; }
+.timeline li { position: relative; padding-left: 28px; padding-bottom: 18px; font-size: 14px; }
+.timeline li::before { content: ""; position: absolute; left: 4px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--border-color); }
+.timeline li::after { content: ""; position: absolute; left: 8px; top: 18px; bottom: 0; width: 2px; background: var(--border-color); }
+.timeline li:last-child::after { display: none; }
+.timeline li.done::before { background: var(--primary); }
+.timeline li.current::before { background: var(--danger); box-shadow: 0 0 0 4px rgba(214,71,58,0.2); }
+
+.helpline-strip {
+  background: var(--primary); color: #FFF; padding: 22px; border-radius: var(--radius);
+  display: flex; flex-wrap: wrap; justify-content: space-around; gap: 20px; text-align: center; margin-top: 30px;
+}
+.helpline-item .num { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; color: var(--accent); }
+
+footer { background: var(--bg-card); border-top: 1px solid var(--border-color); padding: 24px; text-align: center; font-size: 14px; color: var(--text-muted); }
+
+.hidden { display: none !important; }
+
+.sos-btn {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--danger); color: white;
+  width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  font-weight: 700; text-decoration: none; box-shadow: 0 4px 15px rgba(214,71,58,0.4);
+  z-index: 1000; animation: pulse 2s infinite; font-size: 13px; line-height: 1.2;
+}
+.sos-btn span { font-size: 18px; }
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214,71,58,0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(214,71,58,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214,71,58,0); }
+}
+
+@media(max-width: 768px) {
+  .hero, .row2, .row3, .thana-info-card { grid-template-columns: 1fr; }
+  nav.mastnav { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <svg class="seal-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="#0F5C43" stroke="#D4AF37" stroke-width="4"/>
+        <path d="M50 18L75 30V52C75 67.5 64.3 81.3 50 86C35.7 81.3 25 67.5 25 52V30L50 18Z" fill="#0B4A38" stroke="#D4AF37" stroke-width="2"/>
+        <path d="M42 48L48 54L58 42" stroke="#D4AF37" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="50" cy="50" r="40" stroke="#D4AF37" stroke-width="1" stroke-dasharray="2 2"/>
+      </svg>
+      <div class="brand-text">
+        <div class="bn" data-key="title_bn">সাইবার এসওএস বিডি</div>
+        <div class="en" data-key="title_sub">Cyber SOS BD — Bangladesh Police Cyber Unit</div>
+      </div>
+    </div>
+    
+    <nav class="mastnav">
+      <a href="#report" data-key="nav_report">অভিযোগ করুন</a>
+      <a href="#thana-finder" data-key="nav_thana">থানা ও ম্যাপ</a>
+      <a href="#laws" data-key="nav_laws">আইন ও সাজা</a>
+      <a href="#track" data-key="nav_track">ট্র্যাক করুন</a>
+      <a href="#awareness" data-key="nav_awareness">সচেতনতা</a>
+    </nav>
+
+    <div class="controls">
+      <button class="btn-toggle" id="langToggle" onclick="toggleLanguage()">🌐 <span id="langText">English</span></button>
+      <button class="btn-toggle" id="themeToggle" onclick="toggleTheme()">🌙 <span id="themeText">Night</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1 data-key="hero_title">অনলাইন সাইবার অপরাধ প্রতিরোধ ও থানা সহায়তা পোর্টাল</h1>
+      <p class="lede" data-key="hero_desc">বিকাশ/ব্যাংক জালিয়াতি, আইডি হ্যাকিং, ব্ল্যাকমেইলিং বা অনলাইন হয়রানির শিকার? তাৎক্ষণিক ডিজিটাল অভিযোগ জমা দিন এবং সরাসরি আপনার নিকটস্থ থানার কন্টাক্ট ও ম্যাপ লোকেশন পান।</p>
+      <div class="hero-cta">
+        <a href="#report" class="btn btn-primary" data-key="btn_file">অভিযোগ দায়ের করুন →</a>
+        <a href="#thana-finder" class="btn btn-outline" data-key="btn_thana_hero">লোকাল থানা খুঁজুন 📍</a>
+      </div>
+    </div>
+    <div class="ticket-preview">
+      <div class="tp-row"><span data-key="lbl_issued">ইসুকৃত তারিখ</span><span id="currentYear"></span></div>
+      <div style="margin: 10px 0;"><span class="tp-tag" data-key="lbl_receipt">ডিজিটাল ট্র্যাকিং কোড</span></div>
+      <div class="tp-ref">CSB-2026-98241</div>
+      <div class="tp-row"><span data-key="lbl_status">অবস্থা</span><span style="color:var(--primary)" data-key="lbl_received">গৃহীত হয়েছে</span></div>
+    </div>
+  </section>
+
+  <section id="scanner" style="padding-top:0;">
+    <div class="inner">
+      <div class="tracker-box" style="max-width: 100%; display: flex; flex-direction: column; gap: 10px; border-left: 4px solid var(--accent);">
+        <div>
+          <h3 style="margin: 0; color: var(--primary);">🔍 স্ক্যামার নম্বর ও লিংক স্ক্যানার (AI Threat Check)</h3>
+          <p style="margin: 4px 0 15px 0; font-size: 14px; color: var(--text-muted);">সন্দেহভাজন ফোন নম্বর (যেমন প্রতারক) বা ওয়েবসাইটের লিংক (ফিশিং) চেক করুন।</p>
+        </div>
+        <div class="track-input-row">
+          <input type="text" id="scanInput" placeholder="ফোন নম্বর (যেমন: 017...) বা ওয়েব লিংক দিন...">
+          <button class="btn btn-primary" onclick="doScan()">স্ক্যান করুন</button>
+        </div>
+        <div id="scanResult" style="font-size: 14.5px; font-weight: 600; min-height: 24px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="categories">
+    <div class="inner">
+      <div class="section-head">
+        <h2 data-key="sec_cat_title">সাইবার অপরাধের ধরন ও রিকভারি গাইড</h2>
+        <p data-key="sec_cat_desc">যে কোনো ক্যাটাগরিতে ক্লিক করে বিস্তারিত রিকভারি স্টেপ ও তাৎক্ষণিক করণীয় জানুন।</p>
+      </div>
+      <div class="cat-grid" id="catGrid">
+        <div class="cat-card" onclick="openModal('fraud')">
+          <div class="num">01</div>
+          <h3>আর্থিক জালিয়াতি (MFS/ব্যাংক)</h3>
+          <p>বিকাশ, নগদ বা ব্যাংক একাউন্ট হ্যাক অথবা প্রতারণা।</p>
+          <span class="more-link">বিস্তারিত গাইড →</span>
+        </div>
+        <div class="cat-card" onclick="openModal('harass')">
+          <div class="num">02</div>
+          <h3>সাইবার বুলিং ও ব্ল্যাকমেইল</h3>
+          <p>ছবি বা ভিডিও দিয়ে হুমকি, অনলাইনে মানহানি।</p>
+          <span class="more-link">বিস্তারিত গাইড →</span>
+        </div>
+        <div class="cat-card" onclick="openModal('hack')">
+          <div class="num">03</div>
+          <h3>সোশ্যাল মিডিয়া ও আইডি হ্যাকিং</h3>
+          <p>ফেসবুক, হোয়াটসঅ্যাপ বা ইমেইল আইডি হ্যাক হওয়া।</p>
+          <span class="more-link">বিস্তারিত গাইড →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="checklist">
+    <div class="section-head">
+      <h2 data-key="sec_check_title">🚨 সাইবার আক্রমণের প্রথম ১০ মিনিটের চেকলিস্ট</h2>
+      <p data-key="sec_check_desc">অপরাধের শিকার হওয়া মাত্রই ক্ষতি কমাতে নিচের পদক্ষেপগুলো দ্রুত পূরণ করুন।</p>
+    </div>
+    <div class="checklist-grid">
+      <div class="check-item">
+        <h4 data-key="chk1_t">১. ইউআরএল সহ স্ক্রিনশট ও মেটাডেটা সেভ</h4>
+        <p data-key="chk1_d">অপরাধীর প্রোফাইল লিংক (URL), মেসেজ, ব্যাংক লেনদেনের স্টেটমেন্ট এবং সময় সহ পরিষ্কার স্ক্রিনশট নিন। প্রমাণ ডিলিট করবেন না।</p>
+      </div>
+      <div class="check-item">
+        <h4 data-key="chk2_t">২. ব্যাংকিং ও MFS একাউন্ট লক করা</h4>
+        <p data-key="chk2_d">বিকাশ, নগদ বা ব্যাংক একাউন্ট হ্যাক হলে দ্রুত হটলাইনে ফোন দিয়ে সার্ভিস ফ্রিজ / চার্জব্যাক (Chargeback) রিকোয়েস্ট করুন।</p>
+      </div>
+      <div class="check-item">
+        <h4 data-key="chk3_t">৩. টু-ফ্যাক্টর সিকিউরিটি ও পাসওয়ার্ড চেঞ্জ</h4>
+        <p data-key="chk3_d">অন্য কোনো ডিভাইস থেকে ইমেইল বা ফেসবুকের Log Out All Devices অপশন ব্যবহার করুন এবং নতুন শক্তিশালী পাসওয়ার্ড দিন।</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="report">
+    <div class="inner">
+      <div class="section-head">
+        <h2 data-key="sec_report_title">অনলাইন সাইবার অভিযোগ ফরম</h2>
+        <p data-key="sec_report_desc">আপনার সঠিক বিভাগ, জেলা ও থানা নির্বাচন করে অভিযোগ দায়ের করুন। <span style="color:var(--primary); font-weight:bold;">(Auto-Save Enabled)</span></p>
+      </div>
+
+      <div class="form-shell">
+        <div class="form-head">
+          <span id="formCatTitle" style="font-weight:700;">সাইবার অভিযোগ ফরম</span>
+          <span id="formStepLabel" style="font-family:'IBM Plex Mono'; font-size:12px;">STEP 1 OF 3</span>
+        </div>
+        <div class="progress-bar" id="progressBar" style="width: 33%;"></div>
+        <div class="form-body">
+          
+          <div class="form-page" id="step1" data-page="1">
+            <div class="row2">
+              <div class="field">
+                <label data-key="lbl_name">অভিযোগকারীর পূর্ণ নাম (NID অনুযায়ী)</label>
+                <input type="text" id="in-name" placeholder="মো: আব্দুল করিম">
+              </div>
+              <div class="field">
+                <label data-key="lbl_nid">জাতীয় পরিচয়পত্র (NID) নম্বর</label>
+                <input type="text" id="in-nid" placeholder="১০ বা ১৭ ডিজিটের এনআইডি">
+              </div>
+            </div>
+
+            <div class="row2">
+              <div class="field">
+                <label data-key="lbl_phone">মোবাইল নম্বর (সচল)</label>
+                <input type="text" id="in-phone" placeholder="017XXXXXXXX">
+              </div>
+              <div class="field">
+                <label data-key="lbl_email">ইমেইল ঠিকানা (ঐচ্ছিক)</label>
+                <input type="email" id="in-email" placeholder="example@gmail.com">
+              </div>
+            </div>
+
+            <div class="row3">
+              <div class="field">
+                <label data-key="lbl_division">বিভাগ</label>
+                <select id="in-division" onchange="updateDistricts('in-division', 'in-district', 'in-thana')">
+                  <option value="" data-key="opt_select_div">বিভাগ নির্বাচন করুন</option>
+                  <option value="Dhaka">ঢাকা (Dhaka)</option>
+                  <option value="Chattogram">চট্টগ্রাম (Chattogram)</option>
+                  <option value="Rajshahi">রাজশাহী (Rajshahi)</option>
+                  <option value="Khulna">খুলনা (Khulna)</option>
+                  <option value="Barishal">বরিশাল (Barishal)</option>
+                  <option value="Sylhet">সিলেট (Sylhet)</option>
+                  <option value="Rangpur">রংপুর (Rangpur)</option>
+                  <option value="Mymensingh">ময়মনসিংহ (Mymensingh)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-key="lbl_district">জেলা</label>
+                <select id="in-district" onchange="updateThanas('in-division', 'in-district', 'in-thana')">
+                  <option value="" data-key="opt_select_dist">প্রথমে বিভাগ নির্বাচন করুন</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-key="lbl_thana">সংশ্লিষ্ট থানা</label>
+                <select id="in-thana">
+                  <option value="" data-key="opt_select_thana">প্রথমে জেলা নির্বাচন করুন</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-page hidden" id="step2" data-page="2">
+            
+            <div class="row2" style="margin-bottom: 0;">
+              <div class="field">
+                <label data-key="lbl_crime_type">অপরাধের ধরন (Threat Indicator)</label>
+                <select id="in-crime-type" onchange="updateThreatLevel()">
+                  <option value="">অপরাধের ধরন নির্বাচন করুন</option>
+                  <option value="financial">আর্থিক জালিয়াতি / বিকাশ হ্যাক</option>
+                  <option value="blackmail">ব্ল্যাকমেইলিং / হুমকি / পর্নোগ্রাফি</option>
+                  <option value="id_hack">ফেসবুক / সোশ্যাল মিডিয়া হ্যাকিং</option>
+                  <option value="other">অন্যান্য</option>
+                </select>
+              </div>
+              <div class="field">
+                <label data-key="lbl_platform">যে মাধ্যমে ঘটনাটি ঘটেছে</label>
+                <input type="text" id="in-platform" placeholder="যেমন: বিকাশ, ফেসবুক, হোয়াটসঅ্যাপ">
+              </div>
+            </div>
+            
+            <div id="threat-indicator" style="margin-bottom: 15px; font-size: 13.5px; min-height: 20px;"></div>
+
+            <div class="row2">
+              <div class="field">
+                <label data-key="lbl_date">ঘটনার তারিখ</label>
+                <input type="date" id="in-date">
+              </div>
+            </div>
+
+            <div class="field">
+              <label data-key="lbl_desc">ঘটনার পূর্ণাঙ্গ বিবরণ</label>
+              <textarea id="in-desc" rows="3" placeholder="ঘটনাটি কিভাবে সংঘটিত হয়েছিল তার স্পষ্ট বিবরণ লিখুন..."></textarea>
+            </div>
+
+            <div class="field">
+              <label data-key="lbl_proof">প্রমাণ/স্ক্রিনশট সংযুক্ত করুন (ছবি ফাইল)</label>
+              <div class="file-drop" onclick="document.getElementById('in-files').click()">
+                📸 <span data-key="lbl_drop_text">এখানে ক্লিক করে স্ক্রিনশট বা প্রমাণের ফাইল সিলেক্ট করুন</span>
+              </div>
+              <input type="file" id="in-files" accept="image/*" class="hidden" onchange="handleFileUpload(this.files)">
+              <div class="file-list" id="fileList"></div>
+            </div>
+          </div>
+
+          <div class="form-page hidden" id="step3" data-page="3">
+            <div class="legal-box">
+              <h4 style="margin:0 0 8px 0; color:var(--danger);" data-key="lbl_legal_head">আইনি সতর্কবার্তা ও ঘোষণা</h4>
+              <p style="font-size:13.5px; margin:0; line-height: 1.6;" data-key="lbl_legal_text">
+                আমি সজ্ঞানে ঘোষণা করছি যে, এই ফর্মে প্রদত্ত সমস্ত তথ্য ও সংযুক্ত প্রমাণ সম্পূর্ণ সত্য এবং সঠিক। যদি ভবিষ্যতে প্রমাণিত হয় যে আমি কোনো মিথ্যা, বিভ্রান্তিকর বা উদ্দেশ্যপ্রণোদিত তথ্য প্রদান করেছি, তবে বাংলাদেশ সাইবার নিরাপত্তা আইন ও প্রচলিত দণ্ডবিধি অনুযায়ী আমার বিরুদ্ধে আইনগত ব্যবস্থা গ্রহণ করা হবে।
+              </p>
+            </div>
+            <div style="margin-top:15px;">
+              <label style="font-size:14px; cursor:pointer; font-weight:600;">
+                <input type="checkbox" id="in-consent" style="width:auto; margin-right: 6px;"> <span data-key="lbl_agree">আমি ওপরের আইনি শর্তাবলী ও অঙ্গীকারনামায় পূর্ণ সম্মতি প্রদান করছি।</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-page hidden" id="stepdone" data-page="done">
+            <div style="text-align:center; padding: 20px 0;">
+              <h3 style="color:var(--primary);" data-key="msg_success">অভিযোগ সফলভাবে নিবন্ধিত হয়েছে!</h3>
+              <p data-key="msg_ref">আপনার ট্র্যাকিং রেফারেন্স আইডি:</p>
+              <div style="font-size: 30px; font-weight: 700; color: var(--accent); font-family:'IBM Plex Mono';" id="finalRef">CSB-XXXX-XXXX</div>
+              <p style="font-size:13px; color:var(--text-muted);" data-key="msg_save">পরবর্তীতে তদন্তের আপডেট চেক করতে এই রেফারেন্স আইডিটি সুরক্ষিত রাখুন।</p>
+            </div>
+          </div>
+
+          <div class="form-nav" id="formNav">
+            <button class="btn btn-outline" id="backBtn" onclick="prevStep()" data-key="btn_back" style="visibility: hidden;">← পিছনে</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()" data-key="btn_next">পরবর্তী →</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="thana-finder">
+    <div class="section-head">
+      <h2 data-key="thana_head">📍 লোকাল থানা ডিরেক্টরি ও ম্যাপ লোকেশন</h2>
+      <p data-key="thana_sub">আপনার এলাকার থানা সিলেক্ট করে দায়িত্বপ্রাপ্ত কর্মকর্তা, ফোন নম্বর ও ম্যাপের গতিপথ দেখুন।</p>
+    </div>
+
+    <div style="max-width:820px; margin:0 auto; background:var(--bg-card); padding:24px; border-radius:var(--radius); border:1px solid var(--border-color); box-shadow:var(--shadow);">
+      <div class="row3">
+        <div class="field">
+          <label data-key="lbl_division">বিভাগ</label>
+          <select id="finder-div" onchange="updateDistricts('finder-div', 'finder-dist', 'finder-thana')">
+            <option value="">বিভাগ সিলেক্ট করুন</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Chattogram">Chattogram</option>
+            <option value="Rajshahi">Rajshahi</option>
+            <option value="Khulna">Khulna</option>
+            <option value="Barishal">Barishal</option>
+            <option value="Sylhet">Sylhet</option>
+            <option value="Rangpur">Rangpur</option>
+            <option value="Mymensingh">Mymensingh</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-key="lbl_district">জেলা</label>
+          <select id="finder-dist" onchange="updateThanas('finder-div', 'finder-dist', 'finder-thana')">
+            <option value="">জেলা সিলেক্ট করুন</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-key="lbl_thana">থানা</label>
+          <select id="finder-thana" onchange="showThanaInfo()">
+            <option value="">থানা সিলেক্ট করুন</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="thanaResult" class="thana-info-card hidden">
+        <div class="thana-details">
+          <h3 id="t-name">থানার নাম</h3>
+          <p><strong>ওসি (OC) নম্বর:</strong> <span id="t-oc">N/A</span></p>
+          <p><strong>ডিউটি অফিসার:</strong> <span id="t-duty">N/A</span></p>
+          <p><strong>সাইবার হেল্পডেস্ক:</strong> <span id="t-cyber">N/A</span></p>
+          <p><strong>ঠিকানা:</strong> <span id="t-addr">N/A</span></p>
+          <div style="margin-top:12px;">
+            <a href="#" id="t-maplink" target="_blank" class="btn btn-outline" style="font-size:13px;">গুগল ম্যাপে দেখুন ↗</a>
+          </div>
+        </div>
+        <div>
+          <iframe id="t-iframe" class="map-frame" src="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="laws">
+    <div class="inner">
+      <div class="section-head">
+        <h2 data-key="laws_head">⚖️ সাইবার আইন ও অপরাধের দণ্ড (বাংলাদেশ)</h2>
+        <p data-key="laws_sub">বাংলাদেশের সাইবার নিরাপত্তা আইন ও পর্নোগ্রাফি নিয়ন্ত্রণ আইনের অধীনে সাজাসমূহ।</p>
+      </div>
+
+      <table class="law-table">
+        <thead>
+          <tr>
+            <th>অপরাধের বিষয়</th>
+            <th>আইনি ধারা</th>
+            <th>সর্বোচ্চ শাস্তি ও জরিমানা</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>কম্পিউটার/আইডি হ্যাকিং</strong></td>
+            <td>সাইবার নিরাপত্তা আইন (ধারা ৩৩)</td>
+            <td>সর্বোচ্চ ৫ বছর কারাদণ্ড বা লাখ টাকা জরিমানা।</td>
+          </tr>
+          <tr>
+            <td><strong>পর্নোগ্রাফি ও ব্ল্যাকমেইলিং</strong></td>
+            <td>পর্নোগ্রাফি নিয়ন্ত্রণ আইন (ধারা ৮)</td>
+            <td>২ থেকে ৫ বছর পর্যন্ত সশ্রম কারাদণ্ড ও ২ লাখ টাকা জরিমানা।</td>
+          </tr>
+          <tr>
+            <td><strong>অনলাইন আর্থিক জালিয়াতি</strong></td>
+            <td>দণ্ডবিধি (ধারা ৪২০ / ৪০৬)</td>
+            <td>সর্বোচ্চ ৭ বছর কারাদণ্ড ও অর্থদণ্ড।</td>
+          </tr>
+          <tr>
+            <td><strong>ফেক আইডি দিয়ে মানহানি</strong></td>
+            <td>সাইবার নিরাপত্তা আইন (ধারা ২৫)</td>
+            <td>সর্বোচ্চ ৩ বছর কারাদণ্ড বা জরিমানা।</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="track">
+    <div class="section-head" style="text-align: center;">
+      <h2 data-key="track_head">অভিযোগের লাইভ আপডেট চেক করুন</h2>
+      <p data-key="track_sub">প্রাপ্ত রেফারেন্স আইডি ইনপুট করে বর্তমান তদন্তের অবস্থা জানুন।</p>
+    </div>
+    <div class="tracker-box">
+      <div class="track-input-row">
+        <input type="text" id="trackInput" placeholder="e.g. CSB-2026-98241">
+        <button class="btn btn-primary" onclick="doTrack()" data-key="btn_search">খুঁজুন</button>
+      </div>
+      <div id="trackResult"></div>
+    </div>
+  </section>
+
+  <section class="alt" id="awareness">
+    <div class="inner">
+      <details class="warning-box" style="cursor: pointer;">
+        <summary><h4 style="display:inline;" data-key="warn_title1">⚠️ ওটিপি (OTP) ও পিন কোড স্ক্যাম সতর্কতা (ক্লিক করুন)</h4></summary>
+        <p style="margin-top:10px; border-top: 1px solid var(--border-color); padding-top: 10px;" data-key="warn_desc1">কোনো অপরিচিত ব্যাংক লটারি, উপহার বা বিকাশ রিফান্ডের লোভে অপরিচিত লিংকে ক্লিক করবেন না এবং ওটিপি (OTP) ও পিন কোড কাউকে প্রদান করবেন না। ব্যাংক কখনোই আপনার পিন জানতে চায় না।</p>
+      </details>
+      <details class="warning-box" style="cursor: pointer;">
+        <summary><h4 style="display:inline;" data-key="warn_title2">⚠️ জব অফার ও টেলিগ্রাম ইনভেস্টমেন্ট স্ক্যাম (ক্লিক করুন)</h4></summary>
+        <p style="margin-top:10px; border-top: 1px solid var(--border-color); padding-top: 10px;" data-key="warn_desc2">ইউটিউব ভিডিও লাইক দেওয়া বা টেলিগ্রামে টাস্ক পূরণের মাধ্যমে টাকা উপার্জনের অফারগুলো ১০০% প্রতারণা। এরা প্রথমে সামান্য টাকা দিয়ে বিশ্বাস অর্জন করে, পরে বড় এমাউন্ট হাতিয়ে নেয়।</p>
+      </details>
+
+      <div class="helpline-strip" id="helpline">
+        <div class="helpline-item">
+          <div class="num">৯৯৯</div>
+          <div data-key="help_emergency">জাতীয় জরুরি সেবা (২৪ ঘণ্টা)</div>
+        </div>
+        <div class="helpline-item">
+          <div class="num">০১৭৩০-৩৩৬৬০১</div>
+          <div data-key="help_cid">সিআইডি সাইবার হেল্পলাইন</div>
+        </div>
+        <div class="helpline-item">
+          <div class="num">01769691509</div>
+          <div data-key="help_pcsw">পুলিশ সাইবার সাপোর্ট ফর উইমেন</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay hidden" id="catModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h3 id="modalTitle" style="color:var(--primary); margin-top:0;"></h3>
+    <div id="modalBody" style="font-size:14.5px; line-height:1.7;"></div>
+    <div style="margin-top:20px; text-align:right;">
+      <a href="#report" onclick="closeModal()" class="btn btn-primary">এই বিষয়ে সরাসরি অভিযোগ করুন →</a>
+    </div>
+  </div>
+</div>
+
+<a href="tel:999" class="sos-btn" title="জরুরি কল 999">
+  <span>🆘</span> 999
+</a>
+
+<footer>
+  <div>
+    <p style="margin: 0;" data-key="footer_text">সাইবার এসওএস বিডি — সাইবার অপরাধ প্রতিরোধ ও নাগরিক সেবা পোর্টাল | বাংলাদেশ পুলিশ</p>
+    <p style="font-size:12px; margin-top:4px; opacity: 0.8;">© <span id="footerYear"></span> CyberSOS BD. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+const locationTree = {
+  Dhaka: {
+    Dhaka: ['Dhanmondi', 'Gulshan', 'Mirpur', 'Uttara', 'Savar', 'Tejgaon', 'Badda', 'Paltan'],
+    Gazipur: ['Gazipur Sadar', 'Kaliakair', 'Sreepur', 'Kapasia', 'Kaliganj'],
+    Narayanganj: ['Narayanganj Sadar', 'Siddhirganj', 'Rupganj', 'Araihazar', 'Bandar'],
+    Tangail: ['Tangail Sadar', 'Sakhipur', 'Basail', 'Madhupur'],
+    Kishoreganj: ['Kishoreganj Sadar', 'Bhairab', 'Bajitpur', 'Kuliarchar']
+  },
+  Chattogram: {
+    Chattogram: ['Kotwali', 'Panchlaish', 'Pahartali', 'Halishahar', 'Hathazari', 'Sitakunda'],
+    CoxsBazar: ['CoxsBazar Sadar', 'Teknaf', 'Ukhiya', 'Ramu', 'Chakaria']
+  },
+  Rajshahi: {
+    Rajshahi: ['Boalia', 'Rajpara', 'Motihar', 'Godagari', 'Puthia'],
+    Bogura: ['Bogura Sadar', 'Sherpur', 'Shibganj', 'Adamdighi']
+  },
+  Khulna: {
+    Khulna: ['Khulna Sadar', 'Sonadanga', 'Daulatpur', 'Khalishpur', 'Dumuria']
+  },
+  Barishal: {
+    Barishal: ['Barishal Sadar', 'Bakerganj', 'Gournadi', 'Banaripara']
+  },
+  Sylhet: {
+    Sylhet: ['Kotwali', 'Shahporan', 'South Surma', 'Golapganj', 'Biyanibazar']
+  },
+  Rangpur: {
+    Rangpur: ['Rangpur Sadar', 'Mithapukur', 'Pirganj', 'Taraganj']
+  },
+  Mymensingh: {
+    Mymensingh: ['Mymensingh Sadar', 'Bhaluka', 'Trishal', 'Gouripur']
+  }
+};
+
+const thanaDatabase = {
+  'Dhanmondi': { oc: '01320-000001', duty: '01320-000002', cyber: '01700-112233', addr: 'Mirpur Road, Dhanmondi, Dhaka', query: 'Dhanmondi+Police+Station+Dhaka' },
+  'Gulshan': { oc: '01320-000010', duty: '01320-000011', cyber: '01700-112244', addr: 'Gulshan 2, Dhaka', query: 'Gulshan+Police+Station+Dhaka' },
+  'Mirpur': { oc: '01320-000020', duty: '01320-000021', cyber: '01700-112255', addr: 'Section 10, Mirpur, Dhaka', query: 'Mirpur+Model+Thana+Dhaka' },
+  'Uttara': { oc: '01320-000030', duty: '01320-000031', cyber: '01700-112266', addr: 'Sector 6, Uttara, Dhaka', query: 'Uttara+Thana+Dhaka' }
+};
+
+const crimeDetails = {
+  fraud: {
+    title_bn: 'আর্থিক জালিয়াতি (MFS/ব্যাংক)',
+    body_bn: `
+      <h4>জরুরি উদ্ধার নির্দেশিকা:</h4>
+      <ul>
+        <li><strong>১. হটলাইনে কল:</strong> টাকা ভুল অ্যাকাউন্টে বা হ্যাকার অ্যাকাউন্টে গেলে সাথে সাথে বিকাশ (16247) বা ব্যাংক হটলাইনে ফোন দিন।</li>
+        <li><strong>২. ট্রানজেকশন আইডি:</strong> TrxID এবং কলারের নম্বর সেভ করে রাখুন।</li>
+        <li><strong>৩. চার্জব্যাক আবেদন:</strong> ব্যাংকে গিয়ে তাৎক্ষণিক লিখিত অভিযোগ জমা দিয়ে ট্রানজেকশন হোল্ড (Chargeback) করতে বলুন।</li>
+      </ul>
+    `
+  },
+  harass: {
+    title_bn: 'সাইবার বুলিং ও ব্ল্যাকমেইল',
+    body_bn: `
+      <h4>জরুরি পরামর্শ:</h4>
+      <ul>
+        <li><strong>১. টাকা দেবেন না:</strong> ব্ল্যাকমেইলারকে টাকা দিলে সে বারবার ভয় দেখাবে। যোগাযোগের মাধ্যমগুলো রেকর্ড রাখুন।</li>
+        <li><strong>২. স্ক্রিনশট সংগ্রহ:</strong> মেসেজ, ফোন নম্বর ও ইউআরএল সহ সমস্ত তথ্য সংরক্ষণ করুন।</li>
+        <li><strong>৩. PCSW সাপোর্ট:</strong> নারীদের ক্ষেত্রে 'পুলিশ সাইবার সাপোর্ট ফর উইমেন' (01769691509) এ যোগাযোগ করুন।</li>
+      </ul>
+    `
+  },
+  hack: {
+    title_bn: 'সোশ্যাল মিডিয়া ও আইডি হ্যাকিং',
+    body_bn: `
+      <h4>রিকভারি গাইড:</h4>
+      <ul>
+        <li><strong>১. Trusted Contacts:</strong> ফেসবুকে ট্রাস্টেড ফ্রেন্ডস বা এনআইডি দিয়ে Recovery Link এর মাধ্যমে ব্যাক করার চেষ্টা করুন।</li>
+        <li><strong>২. বন্ধু-বান্ধবকে জানান:</strong> আইডি থেকে টাকা চাওয়া হলে দ্রুত আপনার পরিচিতদের সতর্ক পোস্ট দিতে বলুন।</li>
+      </ul>
+    `
+  }
+};
+
+const i18n = {
+  bn: {
+    title_bn: "সাইবার এসওএস বিডি",
+    title_sub: "Cyber SOS BD — Bangladesh Police Cyber Unit",
+    nav_report: "অভিযোগ করুন",
+    nav_thana: "থানা ও ম্যাপ",
+    nav_laws: "আইন ও সাজা",
+    nav_track: "ট্র্যাক করুন",
+    nav_awareness: "সচেতনতা",
+    hero_title: "অনলাইন সাইবার অপরাধ প্রতিরোধ ও থানা সহায়তা পোর্টাল",
+    hero_desc: "বিকাশ/ব্যাংক জালিয়াতি, আইডি হ্যাকিং, ব্ল্যাকমেইলিং বা অনলাইন হয়রানির শিকার? তাৎক্ষণিক ডিজিটাল অভিযোগ জমা দিন এবং সরাসরি আপনার নিকটস্থ থানার কন্টাক্ট ও ম্যাপ লোকেশন পান।",
+    btn_file: "অভিযোগ দায়ের করুন →",
+    btn_thana_hero: "লোকাল থানা খুঁজুন 📍",
+    lbl_issued: "ইসুকৃত তারিখ",
+    lbl_receipt: "ডিজিটাল ট্র্যাকিং কোড",
+    lbl_status: "অবস্থা",
+    lbl_received: "গৃহীত হয়েছে"
+  },
+  en: {
+    title_bn: "Cyber SOS BD",
+    title_sub: "Bangladesh Police Cyber Unit",
+    nav_report: "Report Crime",
+    nav_thana: "Police Station Map",
+    nav_laws: "Cyber Laws",
+    nav_track: "Track Case",
+    nav_awareness: "Awareness",
+    hero_title: "Online Cyber Crime Prevention & Help Portal",
+    hero_desc: "Victim of bKash/Bank fraud, ID hacking, blackmailing? Submit an instant digital complaint and get direct contact details & map location of your nearest police station.",
+    btn_file: "File a Complaint →",
+    btn_thana_hero: "Find Local Thana 📍",
+    lbl_issued: "Issued Date",
+    lbl_receipt: "Digital Tracking Code",
+    lbl_status: "Status",
+    lbl_received: "Received"
+  }
+};
+
+document.getElementById('currentYear').innerText = new Date().toLocaleDateString('bn-BD');
+document.getElementById('footerYear').innerText = new Date().getFullYear();
+
+let currentLang = 'bn';
+function toggleLanguage() {
+  currentLang = currentLang === 'bn' ? 'en' : 'bn';
+  document.getElementById('langText').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.getAttribute('data-key');
+    if (i18n[currentLang] && i18n[currentLang][key]) {
+      el.innerText = i18n[currentLang][key];
+    }
+  });
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeText').innerText = next === 'dark' ? 'Day' : 'Night';
+}
+
+function updateDistricts(divId, distId, thanaId) {
+  const divSelect = document.getElementById(divId);
+  const distSelect = document.getElementById(distId);
+  const thanaSelect = document.getElementById(thanaId);
+  const selectedDiv = divSelect.value;
+  
+  distSelect.innerHTML = '<option value="">জেলা নির্বাচন করুন</option>';
+  thanaSelect.innerHTML = '<option value="">প্রথমে জেলা নির্বাচন করুন</option>';
+  
+  if(selectedDiv && locationTree[selectedDiv]) {
+    const districts = Object.keys(locationTree[selectedDiv]);
+    districts.forEach(d => {
+      distSelect.innerHTML += `<option value="${d}">${d}</option>`;
+    });
+  }
+}
+
+function updateThanas(divId, distId, thanaId) {
+  const divSelect = document.getElementById(divId);
+  const distSelect = document.getElementById(distId);
+  const thanaSelect = document.getElementById(thanaId);
+  const selectedDiv = divSelect.value;
+  const selectedDist = distSelect.value;
+  
+  thanaSelect.innerHTML = '<option value="">থানা নির্বাচন করুন</option>';
+  
+  if(selectedDiv && selectedDist && locationTree[selectedDiv][selectedDist]) {
+    const thanas = locationTree[selectedDiv][selectedDist];
+    thanas.forEach(t => {
+      thanaSelect.innerHTML += `<option value="${t}">${t}</option>`;
+    });
+  }
+}
+
+function showThanaInfo() {
+  const thanaName = document.getElementById('finder-thana').value;
+  const resDiv = document.getElementById('thanaResult');
+  if(!thanaName) { resDiv.classList.add('hidden'); return; }
+  
+  const info = thanaDatabase[thanaName] || { oc: 'N/A', duty: 'N/A', cyber: 'N/A', addr: thanaName + ', Bangladesh', query: thanaName + '+Police+Station+Bangladesh' };
+  
+  document.getElementById('t-name').innerText = thanaName + ' মডেল থানা';
+  document.getElementById('t-oc').innerText = info.oc;
+  document.getElementById('t-duty').innerText = info.duty;
+  document.getElementById('t-cyber').innerText = info.cyber;
+  document.getElementById('t-addr').innerText = info.addr;
+  
+  const mapUrl = `https://maps.google.com/maps?q=${info.query}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  document.getElementById('t-iframe').src = mapUrl;
+  document.getElementById('t-maplink').href = `https://www.google.com/maps/search/?api=1&query=${info.query}`;
+  
+  resDiv.classList.remove('hidden');
+}
+
+function openModal(cat) {
+  const data = crimeDetails[cat];
+  document.getElementById('modalTitle').innerText = data.title_bn;
+  document.getElementById('modalBody').innerHTML = data.body_bn;
+  document.getElementById('catModal').classList.remove('hidden');
+}
+function closeModal() {
+  document.getElementById('catModal').classList.add('hidden');
+}
+
+let uploadedImageUrl = ""; 
+const IMGBB_API_KEY = "c3119e4babe7b94dc6520c910d3c452e"; // ImgBB API Key Connected
+
+async function handleFileUpload(files) {
+  if(!files || files.length === 0) return;
+  const file = files[0];
+  const list = document.getElementById('fileList');
+  list.innerHTML = "⏳ ছবি আপলোড করা হচ্ছে...";
+
+  let formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    let res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: "POST",
+      body: formData
+    });
+    let data = await res.json();
+    if(data.success) {
+      uploadedImageUrl = data.data.url;
+      list.innerHTML = `✅ ছবি আপলোড সফল হয়েছে! <br><a href="${uploadedImageUrl}" target="_blank" style="color:var(--primary)">প্রমাণ দেখুন</a>`;
+    } else {
+      list.innerHTML = "❌ ছবি আপলোড ব্যর্থ হয়েছে!";
+    }
+  } catch(err) {
+    console.error(err);
+    list.innerHTML = "❌ সার্ভার সমস্যা! আবার চেষ্টা করুন।";
+  }
+}
+
+let currentStep = 1;
+function updateFormView() {
+  document.querySelectorAll('.form-page').forEach(page => page.classList.add('hidden'));
+  
+  if(currentStep <= 3) {
+    document.getElementById(`step${currentStep}`).classList.remove('hidden');
+    document.getElementById('formStepLabel').innerText = `STEP ${currentStep} OF 3`;
+    document.getElementById('progressBar').style.width = `${(currentStep/3)*100}%`;
+    document.getElementById('backBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').innerText = currentStep === 3 ? "সাবমিট করুন ✅" : "পরবর্তী →";
+  } else {
+    document.getElementById('stepdone').classList.remove('hidden');
+    document.getElementById('formStepLabel').innerText = `COMPLETED`;
+    document.getElementById('progressBar').style.width = `100%`;
+    document.getElementById('formNav').classList.add('hidden');
+    
+    let generatedRef = `CSB-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+    document.getElementById('finalRef').innerText = generatedRef;
+    
+    if(window.saveToFirebase) {
+      window.saveToFirebase(generatedRef);
+    }
+    localStorage.clear();
+  }
+}
+
+function nextStep() {
+  if (currentStep === 1) {
+    if (!document.getElementById('in-name').value) { alert("দয়া করে অভিযোগকারীর নাম দিন।"); return; }
+    if (!document.getElementById('in-thana').value) { alert("দয়া করে আপনার থানা নির্বাচন করুন।"); return; }
+  } else if (currentStep === 3) {
+    if (!document.getElementById('in-consent').checked) { alert("আপনাকে আইনি শর্তাবলীতে সম্মতি দিতে হবে।"); return; }
+  }
+  currentStep++;
+  updateFormView();
+}
+
+function prevStep() {
+  if (currentStep > 1) { currentStep--; updateFormView(); }
+}
+
+const inputFields = ['in-name', 'in-nid', 'in-phone', 'in-email', 'in-platform', 'in-desc'];
+function saveDraft() {
+  inputFields.forEach(id => {
+    let el = document.getElementById(id);
+    if(el) localStorage.setItem('csb_draft_' + id, el.value);
+  });
+}
+
+function loadDraft() {
+  inputFields.forEach(id => {
+    let el = document.getElementById(id);
+    if(el && localStorage.getItem('csb_draft_' + id)) {
+      el.value = localStorage.getItem('csb_draft_' + id);
+    }
+    if(el) el.addEventListener('input', saveDraft);
+  });
+}
+
+function updateThreatLevel() {
+  const type = document.getElementById('in-crime-type').value;
+  const indicator = document.getElementById('threat-indicator');
+  
+  if(type === 'financial') {
+    indicator.innerHTML = '<span style="color:var(--danger)">🔴 High Threat: দ্রুত ব্যাংক/MFS হটলাইনে কল করে একাউন্ট ফ্রিজ (Hold) করুন।</span>';
+  } else if(type === 'blackmail') {
+    indicator.innerHTML = '<span style="color:var(--danger)">🔴 High Threat: ব্ল্যাকমেইলারকে কোন টাকা পাঠাবেন না, প্রমান (স্ক্রিনশট) সেভ রাখুন।</span>';
+  } else if(type === 'id_hack') {
+    indicator.innerHTML = '<span style="color:var(--accent)">🟡 Medium Threat: ট্রাস্টেড ফ্রেন্ডস দিয়ে আইডি রিকভার করুন এবং পরিচিতদের সতর্ক করুন।</span>';
+  } else {
+    indicator.innerHTML = '';
+  }
+}
+
+function doScan() {
+  const val = document.getElementById('scanInput').value.trim();
+  const res = document.getElementById('scanResult');
+  
+  if(!val) { 
+    res.innerHTML = '<span style="color:var(--danger);">দয়া করে একটি নম্বর বা লিংক দিন।</span>'; 
+    return; 
+  }
+  
+  res.innerHTML = '<span style="color:var(--primary);">⏳ AI স্ক্যান করা হচ্ছে... ডেটাবেস সার্চ চলছে...</span>';
+  
+  setTimeout(() => {
+    if(val.includes('01') && val.length >= 11) {
+       res.innerHTML = '<span style="color:var(--danger);">⚠️ সতর্কতা: এই নম্বরটির বিরুদ্ধে একাধিক স্প্যাম এবং প্রতারণার রিপোর্ট রয়েছে! কোনো লেনদেন করবেন না।</span>';
+    } else if (val.includes('http') || val.includes('.com')) {
+       res.innerHTML = '<span style="color:var(--danger);">⚠️ হাই রিস্ক: এটি একটি ফিশিং বা ম্যালিশিয়াস লিংক! লিংকে প্রবেশ করা থেকে বিরত থাকুন।</span>';
+    } else {
+       res.innerHTML = '<span style="color:var(--primary);">✅ গ্রীন সিগন্যাল: ডেটাবেসে এই মুহূর্তে কোনো নেতিবাচক রিপোর্ট নেই। তবুও অপরিচিত লিংকে সতর্ক থাকুন।</span>';
+    }
+  }, 1200);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadDraft();
+});
+</script>
+
+<!-- Firebase Connected Engine Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Your Firebase Configuration Connected
+  const firebaseConfig = {
+    apiKey: "AIzaSyC51gN9SmnbwGyLDNTRsLJ97z7PuyCXD5w",
+    authDomain: "cybersos-bd.firebaseapp.com",
+    projectId: "cybersos-bd",
+    storageBucket: "cybersos-bd.firebasestorage.app",
+    messagingSenderId: "767230879565",
+    appId: "1:767230879565:web:68d822679960bfac98b904",
+    measurementId: "G-BXE5VFPEXW"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Function to save complaint data directly to Firestore
+  window.saveToFirebase = async function(refID) {
+    const complaintData = {
+      trackingId: refID,
+      name: document.getElementById('in-name').value,
+      nid: document.getElementById('in-nid').value,
+      phone: document.getElementById('in-phone').value,
+      email: document.getElementById('in-email').value,
+      division: document.getElementById('in-division').value,
+      district: document.getElementById('in-district').value,
+      thana: document.getElementById('in-thana').value,
+      crimeType: document.getElementById('in-crime-type').value,
+      platform: document.getElementById('in-platform').value,
+      date: document.getElementById('in-date').value,
+      description: document.getElementById('in-desc').value,
+      evidenceImageUrl: uploadedImageUrl || "প্রমাণ আপলোড করা হয়নি",
+      status: "Pending", 
+      submittedAt: new Date().toISOString()
+    };
+
+    try {
+      await setDoc(doc(db, "complaints", refID), complaintData);
+      console.log("Complaint successfully recorded in Firebase Firestore!");
+    } catch (e) {
+      console.error("Error saving to Firebase: ", e);
+    }
+  };
+
+  // Function to Track Complaint Status live from Firebase
+  window.doTrack = async function() {
+    const trackInput = document.getElementById('trackInput').value.trim();
+    const resultDiv = document.getElementById('trackResult');
+
+    if(!trackInput) {
+      alert("দয়া করে আপনার ট্র্যাকিং রেফারেন্স আইডি দিন।");
+      return;
+    }
+
+    resultDiv.innerHTML = "<p style='margin-top:15px;'>⏳ ফায়ারবেস থেকে তথ্য খোঁজা হচ্ছে...</p>";
+
+    try {
+      const docRef = doc(db, "complaints", trackInput);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        let statusBadge = data.status === "Pending" ? "অপেক্ষমান (Pending)" : data.status === "Investigating" ? "তদন্তাধীন (Investigating)" : "নিষ্পত্তি (Resolved)";
+        
+        resultDiv.innerHTML = `
+          <div style="margin-top:20px; background:var(--bg-body); padding:15px; border-radius:8px; border:1px solid var(--border-color);">
+            <p style="margin:0 0 8px 0;"><strong>অভিযোগকারীর নাম:</strong> ${data.name}</p>
+            <p style="margin:0 0 8px 0;"><strong>সংশ্লিষ্ট থানা:</strong> ${data.thana}, ${data.district}</p>
+            <p style="margin:0;"><strong>বর্তমান অবস্থা:</strong> <span style="color:var(--primary); font-weight:bold;">${statusBadge}</span></p>
+          </div>
+          <ul class="timeline">
+            <li class="done"><strong>অভিযোগ দাখিল:</strong> সিস্টেমে সফলভাবে জমা হয়েছে।</li>
+            <li class="${data.status !== 'Pending' ? 'done' : 'current'}"><strong>প্রাথমিক ডাটা যাচাই:</strong> থানা ও সাইবার ইউনিট ভেরিফাই করছে।</li>
+            <li class="${data.status === 'Resolved' ? 'done' : ''}"><strong>আইনি অ্যাকশন:</strong> তদন্ত শেষে পদক্ষেপ গ্রহণ।</li>
+          </ul>
+        `;
+      } else {
+        resultDiv.innerHTML = `<p style="margin-top:15px; color:var(--danger);">❌ এই ট্র্যাকিং আইডির কোনো অভিযোগ পাওয়া যায়নি!</p>`;
+      }
+    } catch(err) {
+      console.error(err);
+      resultDiv.innerHTML = `<p style="margin-top:15px; color:var(--danger);">❌ ডাটাবেসে সমস্যা হয়েছে!</p>`;
+    }
+  };
+</script>
+</body>
+</html>

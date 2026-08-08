@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard — CyberSOS BD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0F5C43;
+    --primary-dark: #0B4A38;
+    --danger: #D6473A;
+    --bg-body: #F4F6F8;
+    --bg-card: #FFFFFF;
+    --text-main: #17211C;
+    --border-color: rgba(0, 0, 0, 0.12);
+  }
+  body {
+    margin: 0; font-family: 'Hind Siliguri', sans-serif;
+    background: var(--bg-body); color: var(--text-main);
+  }
+  header {
+    background: var(--primary); color: #FFF; padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+  .login-card {
+    max-width: 400px; margin: 100px auto; background: #FFF;
+    padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
+  }
+  input, select {
+    width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border-color);
+    border-radius: 6px; box-sizing: border-box; font-family: inherit;
+  }
+  .btn {
+    background: var(--primary); color: #FFF; padding: 10px 20px;
+    border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  table {
+    width: 100%; border-collapse: collapse; background: #FFF;
+    border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px;
+  }
+  th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+  th { background: #EFEFEF; color: var(--primary); font-weight: 700; }
+  .badge {
+    padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; display: inline-block;
+  }
+  .badge-pending { background: #FEF3C7; color: #D97706; }
+  .badge-investigating { background: #E0F2FE; color: #0284C7; }
+  .badge-resolved { background: #D1FAE5; color: #059669; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Login View -->
+<div id="loginView" class="login-card">
+  <h2 style="color:var(--primary); margin-top:0;">🛡️ Admin Login</h2>
+  <p style="font-size:14px; color:#666;">CyberSOS BD প্যানেলে প্রবেশ করতে পাসওয়ার্ড দিন</p>
+  <input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন...">
+  <button class="btn" onclick="checkAuth()" style="width:100%;">প্রবেশ করুন</button>
+  <p id="loginErr" style="color:var(--danger); font-size:13px; margin-top:10px;"></p>
+</div>
+
+<!-- Main Admin Dashboard -->
+<div id="dashboardView" class="hidden">
+  <header>
+    <div style="font-size:18px; font-weight:700;">CyberSOS BD — Control Panel</div>
+    <button class="btn" style="background:var(--danger);" onclick="logout()">লগ আউট</button>
+  </header>
+
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3>📋 জমা পড়া অভিযোগসমূহ (<span id="totalCount">0</span>)</h3>
+      <button class="btn" onclick="loadComplaints()">🔄 রিফ্রেশ করুন</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>আইডি & তারিখ</th>
+          <th>অভিযোগকারী</th>
+          <th>থানা & এলাকা</th>
+          <th>অপরাধের ধরণ</th>
+          <th>প্রমাণ (Image)</th>
+          <th>স্ট্যাটাস</th>
+          <th>অ্যাকশন</th>
+        </tr>
+      </thead>
+      <tbody id="complaintTable">
+        <tr><td colspan="7" style="text-align:center;">ডেটা লোড হচ্ছে...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Firebase Module Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC51gN9SmnbwGyLDNTRsLJ97z7PuyCXD5w",
+    authDomain: "cybersos-bd.firebaseapp.com",
+    projectId: "cybersos-bd",
+    storageBucket: "cybersos-bd.firebasestorage.app",
+    messagingSenderId: "767230879565",
+    appId: "1:767230879565:web:68d822679960bfac98b904",
+    measurementId: "G-BXE5VFPEXW"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Authentication Logic
+  window.checkAuth = function() {
+    const pass = document.getElementById('adminPass').value;
+    if(pass === "admin123") { // 🔑 আপনার সিক্রেট এডমিন পাসওয়ার্ড
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('dashboardView').classList.remove('hidden');
+      loadComplaints();
+    } else {
+      document.getElementById('loginErr').innerText = "❌ ভুল পাসওয়ার্ড!";
+    }
+  };
+
+  window.logout = function() {
+    location.reload();
+  };
+
+  // Load Complaints from Firestore
+  window.loadComplaints = async function() {
+    const tableBody = document.getElementById('complaintTable');
+    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">⏳ ফায়ারবেস থেকে ডাটা আনা হচ্ছে...</td></tr>`;
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "complaints"));
+      tableBody.innerHTML = "";
+      document.getElementById('totalCount').innerText = querySnapshot.size;
+
+      if(querySnapshot.empty) {
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">এখনও কোনো অভিযোগ জমা পড়েনি।</td></tr>`;
+        return;
+      }
+
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
+
+        let badgeClass = data.status === "Pending" ? "badge-pending" : data.status === "Investigating" ? "badge-investigating" : "badge-resolved";
+        let imageLink = data.evidenceImageUrl && data.evidenceImageUrl.includes("http") 
+          ? `<a href="${data.evidenceImageUrl}" target="_blank" style="color:var(--primary); font-weight:bold;">🖼️ দেখুন</a>` 
+          : "নেই";
+
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <strong style="font-family:'IBM Plex Mono'; color:var(--primary);">${id}</strong><br>
+            <small style="color:#666;">${data.date || 'N/A'}</small>
+          </td>
+          <td>
+            <strong>${data.name}</strong><br>
+            <small>📞 ${data.phone}</small><br>
+            <small>NID: ${data.nid}</small>
+          </td>
+          <td>${data.thana}, ${data.district}</td>
+          <td>
+            <strong>${data.crimeType}</strong><br>
+            <small style="color:#555;">${data.description ? data.description.substring(0, 30) + '...' : ''}</small>
+          </td>
+          <td>${imageLink}</td>
+          <td><span class="badge ${badgeClass}">${data.status}</span></td>
+          <td>
+            <select onchange="updateStatus('${id}', this.value)">
+              <option value="Pending" ${data.status === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option value="Investigating" ${data.status === 'Investigating' ? 'selected' : ''}>Investigating</option>
+              <option value="Resolved" ${data.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+            </select>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    } catch(err) {
+      console.error(err);
+      tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--danger);">❌ ডাটা লোড করতে সমস্যা হয়েছে!</td></tr>`;
+    }
+  };
+
+  // Update Status in Firestore
+  window.updateStatus = async function(docId, newStatus) {
+    try {
+      await updateDoc(doc(db, "complaints", docId), {
+        status: newStatus
+      });
+      alert(`✅ রেফারেন্স ${docId}-এর স্ট্যাটাস পরিবর্তন করে '${newStatus}' করা হয়েছে!`);
+      loadComplaints();
+    } catch(err) {
+      console.error(err);
+      alert("❌ স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে!");
+    }
+  };
+</script>
+</body>
+</html>
