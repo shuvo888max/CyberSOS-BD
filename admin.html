@@ -6,200 +6,290 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #0F5C43;
-    --primary-dark: #0B4A38;
-    --danger: #D6473A;
-    --bg-body: #F4F6F8;
-    --bg-card: #FFFFFF;
-    --text-main: #17211C;
-    --border-color: rgba(0, 0, 0, 0.12);
-  }
-  body {
-    margin: 0; font-family: 'Hind Siliguri', sans-serif;
-    background: var(--bg-body); color: var(--text-main);
-  }
-  header {
-    background: var(--primary); color: #FFF; padding: 16px 24px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-  .login-card {
-    max-width: 400px; margin: 100px auto; background: #FFF;
-    padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
-  }
-  input, select {
-    width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border-color);
-    border-radius: 6px; box-sizing: border-box; font-family: inherit;
-  }
-  .btn {
-    background: var(--primary); color: #FFF; padding: 10px 20px;
-    border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
-  }
-  .btn:hover { background: var(--primary-dark); }
-  table {
-    width: 100%; border-collapse: collapse; background: #FFF;
-    border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px;
-  }
-  th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-  th { background: #EFEFEF; color: var(--primary); font-weight: 700; }
-  .badge {
-    padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; display: inline-block;
-  }
-  .badge-pending { background: #FEF3C7; color: #D97706; }
-  .badge-investigating { background: #E0F2FE; color: #0284C7; }
-  .badge-resolved { background: #D1FAE5; color: #059669; }
-  .hidden { display: none !important; }
+:root{--primary:#0F5C43;--primary-dark:#0B4A38;--danger:#D6473A;--bg-body:#F4F6F8;--bg-card:#FFFFFF;--text-main:#17211C;--border-color:rgba(0,0,0,.12)}
+body{margin:0;font-family:'Hind Siliguri',sans-serif;background:var(--bg-body);color:var(--text-main)}
+header{background:var(--primary);color:#FFF;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.container{max-width:1200px;margin:30px auto;padding:0 20px}
+.login-card{max-width:400px;margin:100px auto;background:#FFF;padding:30px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,.1);text-align:center}
+input,select{width:100%;padding:10px;margin:10px 0;border:1px solid var(--border-color);border-radius:6px;box-sizing:border-box;font-family:inherit}
+.btn{background:var(--primary);color:#FFF;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600}
+.btn:hover{background:var(--primary-dark)}
+table{width:100%;border-collapse:collapse;background:#FFF;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-top:20px}
+th,td{padding:12px 15px;text-align:left;border-bottom:1px solid var(--border-color);font-size:14px}
+th{background:#EFEFEF;color:var(--primary);font-weight:700}
+.badge{padding:4px 8px;border-radius:4px;font-size:12px;font-weight:700;display:inline-block}
+.badge-pending{background:#FEF3C7;color:#D97706}.badge-investigating{background:#E0F2FE;color:#0284C7}.badge-resolved{background:#D1FAE5;color:#059669}
+.hidden{display:none!important}
+</style>
+<style id="language-toggle-style">
+.lang-btn{border:1px solid rgba(255,255,255,.55);background:transparent;color:#fff;padding:7px 11px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px}
+.lang-btn.active{background:#fff;color:var(--primary)}
+</style>
+
+<style id="complaint-details-style">
+.complaint-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.complaint-modal.hidden{display:none!important}
+.complaint-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(3px)}
+.complaint-modal-card{position:relative;width:min(820px,100%);max-height:88vh;overflow:auto;background:var(--bg-card);border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.25);border:1px solid var(--border-color)}
+.complaint-modal-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;padding:18px 20px;border-bottom:1px solid var(--border-color);position:sticky;top:0;background:var(--bg-card);z-index:2}
+.complaint-modal-head h3{margin:0;color:var(--primary);font-size:20px}
+.complaint-modal-head p{margin:4px 0 0;color:#6b7280;font-family:'IBM Plex Mono',monospace;font-size:12px}
+.modal-close{border:0;background:transparent;font-size:28px;line-height:1;cursor:pointer;color:#6b7280;padding:2px 6px}
+.modal-close:hover{color:var(--danger)}
+.complaint-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px}
+.detail-box{border:1px solid var(--border-color);border-radius:9px;padding:11px 13px;background:var(--bg-body)}
+.detail-box.full{grid-column:1/-1}
+.detail-label{display:block;font-size:12px;color:#6b7280;margin-bottom:5px;font-weight:600}
+.detail-value{font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.detail-description{min-height:110px}
+.details-btn{background:var(--primary);color:#fff;border:0;border-radius:5px;padding:7px 10px;cursor:pointer;font-family:inherit;font-weight:600;font-size:12px}
+.details-btn:hover{background:var(--primary-dark)}
+@media(max-width:700px){.complaint-details-grid{grid-template-columns:1fr}.detail-box.full{grid-column:auto}.complaint-modal{padding:10px}}
 </style>
 </head>
 <body>
-
-<!-- Login View -->
 <div id="loginView" class="login-card">
-  <h2 style="color:var(--primary); margin-top:0;">🛡️ Admin Login</h2>
-  <p style="font-size:14px; color:#666;">CyberSOS BD প্যানেলে প্রবেশ করতে পাসওয়ার্ড দিন</p>
-  <input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন...">
-  <button class="btn" onclick="checkAuth()" style="width:100%;">প্রবেশ করুন</button>
-  <p id="loginErr" style="color:var(--danger); font-size:13px; margin-top:10px;"></p>
+<h2 style="color:var(--primary);margin-top:0;">Admin Login</h2>
+<p style="font-size:14px;color:#666;" data-i18n="loginHint">CyberSOS BD প্যানেলে প্রবেশ করতে পাসওয়ার্ড দিন</p>
+<input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন..." data-i18n-placeholder="passwordPlaceholder">
+<button class="btn" onclick="checkAuth()" style="width:100%;"><span data-i18n="login">প্রবেশ করুন</span></button>
+<p id="loginErr" style="color:var(--danger);font-size:13px;margin-top:10px;"></p>
 </div>
 
-<!-- Main Admin Dashboard -->
 <div id="dashboardView" class="hidden">
-  <header>
-    <div style="font-size:18px; font-weight:700;">CyberSOS BD — Control Panel</div>
-    <button class="btn" style="background:var(--danger);" onclick="logout()">লগ আউট</button>
-  </header>
+<header>
+<div style="font-size:18px;font-weight:700;" data-i18n="brand">CyberSOS BD — Control Panel</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button class="lang-btn" id="langBn" onclick="setLanguage('bn')">বাংলা</button>
+<button class="lang-btn" id="langEn" onclick="setLanguage('en')">English</button>
+<button class="btn" style="background:var(--danger);" onclick="logout()" data-i18n="logout">লগ আউট</button>
+</div>
+</header>
+<div class="container">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<h3><span data-i18n="complaints">জমা পড়া অভিযোগসমূহ</span> (<span id="totalCount">0</span>)</h3>
+<button class="btn" onclick="loadComplaints()">🔄 <span data-i18n="refresh">রিফ্রেশ করুন</span></button>
+</div>
+<table>
+<thead><tr>
+<th data-i18n="idDate">আইডি & তারিখ</th><th data-i18n="complainant">অভিযোগকারী</th><th data-i18n="stationArea">থানা & এলাকা</th><th data-i18n="crimeType">অপরাধের ধরণ</th><th data-i18n="evidence">প্রমাণ (Image)</th><th data-i18n="status">স্ট্যাটাস</th><th data-i18n="action">অ্যাকশন</th>
+</tr></thead>
+<tbody id="complaintTable"><tr><td colspan="7" style="text-align:center;">ডেটা লোড হচ্ছে...</td></tr></tbody>
+</table>
+</div>
+</div>
 
-  <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3>📋 জমা পড়া অভিযোগসমূহ (<span id="totalCount">0</span>)</h3>
-      <button class="btn" onclick="loadComplaints()">🔄 রিফ্রেশ করুন</button>
+
+<script>
+const adminTranslations={
+bn:{
+detailsTitle:{bn:'অভিযোগের বিস্তারিত',en:'Complaint Details'},viewDetails:{bn:'বিস্তারিত দেখুন',en:'View Details'},description:{bn:'অভিযোগের বিবরণ',en:'Description'},platform:{bn:'প্ল্যাটফর্ম',en:'Platform'},division:{bn:'বিভাগ',en:'Division'},district:{bn:'জেলা',en:'District'},thana:{bn:'থানা / উপজেলা',en:'Police Station / Upazila'},date:{bn:'তারিখ',en:'Date'},reference:{bn:'রেফারেন্স',en:'Reference'},phone:{bn:'ফোন',en:'Phone'},nid:{bn:'NID',en:'NID'},crime:{bn:'অপরাধের ধরণ',en:'Crime Type'},evidenceUrl:{bn:'প্রমাণের লিংক',en:'Evidence Link'},noValue:{bn:'প্রদান করা হয়নি',en:'Not provided'},brand:"CyberSOS BD — Control Panel",logout:"লগ আউট",complaints:"জমা পড়া অভিযোগসমূহ",
+refresh:"রিফ্রেশ করুন",idDate:"আইডি & তারিখ",complainant:"অভিযোগকারী",stationArea:"থানা & এলাকা",
+crimeType:"অপরাধের ধরণ",evidence:"প্রমাণ (Image)",status:"স্ট্যাটাস",action:"অ্যাকশন",
+loginHint:"CyberSOS BD প্যানেলে প্রবেশ করতে পাসওয়ার্ড দিন",login:"প্রবেশ করুন",
+passwordPlaceholder:"পাসওয়ার্ড লিখুন...",loading:"ডেটা লোড হচ্ছে...",
+loadingFirebase:"ফায়ারবেস থেকে ডাটা আনা হচ্ছে...",none:"এখনও কোনো অভিযোগ জমা পড়েনি।",
+loadError:"ডাটা লোড করতে সমস্যা হয়েছে!",wrongPassword:"ভুল পাসওয়ার্ড!",
+submitted:"অভিযোগ দাখিল",initial:"প্রাথমিক ডাটা যাচাই",evidenceReview:"তথ্য ও প্রমাণ যাচাই",
+forwarded:"সংশ্লিষ্ট কর্তৃপক্ষের কাছে প্রেরণ",investigating:"তদন্ত ও প্রয়োজনীয় ব্যবস্থা",
+resolved:"নিষ্পত্তি / সমাপ্তি",see:"দেখুন",noneValue:"নেই",updated:"স্ট্যাটাস সফলভাবে আপডেট হয়েছে!",
+updateError:"স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে!"
+},
+en:{
+detailsTitle:"Complaint Details",viewDetails:"View Details",description:"Description",platform:"Platform",
+division:"Division",district:"District",thana:"Police Station / Upazila",date:"Date",reference:"Reference",
+phone:"Phone",nid:"NID",crime:"Crime Type",evidenceUrl:"Evidence Link",noValue:"Not provided",
+
+brand:"CyberSOS BD — Control Panel",logout:"Logout",complaints:"Submitted Complaints",
+refresh:"Refresh",idDate:"ID & Date",complainant:"Complainant",stationArea:"Police Station & Area",
+crimeType:"Crime Type",evidence:"Evidence (Image)",status:"Status",action:"Action",
+loginHint:"Enter your password to access the CyberSOS BD panel",login:"Login",
+passwordPlaceholder:"Enter password...",loading:"Loading...",loadingFirebase:"Loading data from Firebase...",
+none:"No complaints have been submitted yet.",loadError:"Failed to load data!",wrongPassword:"Incorrect password!",
+submitted:"Complaint Submitted",initial:"Initial Verification",evidenceReview:"Information & Evidence Review",
+forwarded:"Forwarded to Relevant Authority",investigating:"Investigation & Necessary Action",
+resolved:"Resolution / Closure",see:"View",noneValue:"None",updated:"Status updated successfully!",
+updateError:"Failed to update status!"
+}
+};
+let adminLang=localStorage.getItem("cybersosAdminLang")||"bn";
+window.setLanguage=function(lang){
+adminLang=lang; localStorage.setItem("cybersosAdminLang",lang);
+document.documentElement.lang=lang;
+const t=adminTranslations[lang];
+document.querySelectorAll("[data-i18n]").forEach(el=>{
+ const key=el.getAttribute("data-i18n"); if(t[key]!==undefined) el.textContent=t[key];
+});
+document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+ const key=el.getAttribute("data-i18n-placeholder"); if(t[key]!==undefined) el.placeholder=t[key];
+});
+document.getElementById("langBn")?.classList.toggle("active",lang==="bn");
+document.getElementById("langEn")?.classList.toggle("active",lang==="en");
+if(document.getElementById("dashboardView") && !document.getElementById("dashboardView").classList.contains("hidden")) loadComplaints();
+};
+window.adminT=function(key){
+  const value=adminTranslations[adminLang]?.[key];
+  if(value && typeof value==="object"){
+    return value[adminLang] ?? value.en ?? value.bn ?? key;
+  }
+  return value ?? key;
+};
+
+/* Safely display Firebase values.
+   Handles strings, numbers, arrays and localized/nested objects without showing [object Object]. */
+window.displayFirebaseValue=function(value){
+  if(value===undefined || value===null || value==="") return adminT("noValue");
+  if(typeof value==="string" || typeof value==="number" || typeof value==="boolean") return String(value);
+  if(Array.isArray(value)) return value.map(v=>displayFirebaseValue(v)).join(", ");
+  if(typeof value==="object"){
+    const localized=value[adminLang] ?? value.en ?? value.bn;
+    if(localized!==undefined && localized!==value) return displayFirebaseValue(localized);
+    const preferred=["name","label","title","value","text","type","category","platform"];
+    for(const key of preferred){
+      if(value[key]!==undefined) return displayFirebaseValue(value[key]);
+    }
+    return Object.entries(value)
+      .map(([k,v])=>`${k}: ${displayFirebaseValue(v)}`)
+      .join(" • ");
+  }
+  return String(value);
+};
+window.addEventListener("DOMContentLoaded",()=>setLanguage(adminLang));
+</script>
+
+
+<script>
+window.showComplaintDetails=function(data,id){
+  const t=adminT;
+  document.getElementById('detailsTitle').textContent=t('detailsTitle');
+  document.getElementById('detailsId').textContent=t('reference')+': '+id;
+  const value=(v)=>displayFirebaseValue(v);
+  const box=(label,val,full=false)=>`<div class="detail-box ${full?'full':''}"><span class="detail-label">${label}</span><div class="detail-value">${val}</div></div>`;
+  const safe=(v)=>value(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  const evidenceRaw=data.evidenceUrl||data.evidenceURL||data.evidenceImageUrl||data.proofUrl||'';
+  const evidence=typeof evidenceRaw==='string'?evidenceRaw:displayFirebaseValue(evidenceRaw);
+  let evidenceHtml=safe(evidence);
+  if(evidence){
+    evidenceHtml=`<a href="${safe(evidence)}" target="_blank" rel="noopener" style="color:var(--primary);font-weight:600;">${safe(evidence)}</a>`;
+  }
+  document.getElementById('complaintDetails').innerHTML=
+    box(t('complainant'),safe(data.name))+
+    box(t('phone'),safe(data.phone))+
+    box(t('nid'),safe(data.nid))+
+    box(t('division'),safe(data.division))+
+    box(t('district'),safe(data.district))+
+    box(t('thana'),safe(data.thana))+
+    box(t('crime'),safe(data.crimeType))+
+    box(t('platform'),safe(data.platform))+
+    box(t('date'),safe(data.date))+
+    box(t('status'),safe(data.status))+
+    box(t('evidenceUrl'),evidenceHtml,true)+
+    box(t('description'),`<div class="detail-description">${safe(data.description)}</div>`,true);
+  document.getElementById('complaintModal').classList.remove('hidden');
+};
+window.closeComplaintDetails=function(){
+  document.getElementById('complaintModal').classList.add('hidden');
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeComplaintDetails();});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyC51gN9SmnbwGyLDNTRsLJ97z7PuyCXD5w",
+authDomain:"cybersos-bd.firebaseapp.com",
+projectId:"cybersos-bd",
+storageBucket:"cybersos-bd.firebasestorage.app",
+messagingSenderId:"767230879565",
+appId:"1:767230879565:web:68d822679960bfac98b904",
+measurementId:"G-BXE5VFPEXW"
+};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+window.checkAuth=function(){
+const pass=document.getElementById('adminPass').value;
+if(pass==="admin123"){
+document.getElementById('loginView').classList.add('hidden');
+document.getElementById('dashboardView').classList.remove('hidden');
+loadComplaints();
+}else{
+document.getElementById('loginErr').innerText=adminT("wrongPassword");
+}
+};
+
+window.logout=function(){location.reload();};
+
+window.loadComplaints=async function(){
+const tableBody=document.getElementById('complaintTable');
+tableBody.innerHTML=`<tr><td colspan="7" style="text-align:center;">${adminT("loadingFirebase")}</td></tr>`;
+try{
+const querySnapshot=await getDocs(collection(db,"complaints"));
+tableBody.innerHTML="";
+document.getElementById('totalCount').innerText=querySnapshot.size;
+if(querySnapshot.empty){
+tableBody.innerHTML=`<tr><td colspan="7" style="text-align:center;">${adminT("none")}</td></tr>`;
+return;
+}
+querySnapshot.forEach((docSnap)=>{
+const data=docSnap.data();
+const id=docSnap.id;
+let badgeClass=data.status==="Pending"?"badge-pending":data.status==="Investigating"?"badge-investigating":"badge-resolved";
+let imageLink=data.evidenceImageUrl&&data.evidenceImageUrl.includes("http")
+?`<a href="${data.evidenceImageUrl}" target="_blank" style="color:var(--primary);font-weight:bold;">${adminT("see")}</a>`:adminT("noneValue");
+let tr=document.createElement('tr');
+tr.innerHTML=`
+<td><strong style="font-family:'IBM Plex Mono';color:var(--primary);">${id}</strong><br><small style="color:#666;">${displayFirebaseValue(data.date)}</small></td>
+<td><strong>${displayFirebaseValue(data.name)}</strong><br><small>📞 ${displayFirebaseValue(data.phone)}</small><br><small>NID: ${displayFirebaseValue(data.nid)}</small></td>
+<td>${displayFirebaseValue(data.thana)}, ${displayFirebaseValue(data.district)}</td>
+<td><strong>${displayFirebaseValue(data.crimeType)}</strong><br><button class="details-btn" onclick='showComplaintDetails(${JSON.stringify(data)}, ${JSON.stringify(id)})'>${adminT('viewDetails')}</button></td>
+<td>${imageLink}</td>
+<td><span class="badge ${badgeClass}">${displayFirebaseValue(data.status)}</span></td>
+<td>
+<select onchange="updateStatus('${id}',this.value)">
+<option value="Submitted" ${data.status==='Submitted'?'selected':''}>${adminT('submitted')}</option>
+<option value="Initial Verification" ${data.status==='Initial Verification'?'selected':''}>${adminT('initial')}</option>
+<option value="Evidence Review" ${data.status==='Evidence Review'?'selected':''}>${adminT('evidenceReview')}</option>
+<option value="Forwarded" ${data.status==='Forwarded'?'selected':''}>${adminT('forwarded')}</option>
+<option value="Investigating" ${data.status==='Investigating'?'selected':''}>${adminT('investigating')}</option>
+<option value="Resolved" ${data.status==='Resolved'?'selected':''}>${adminT('resolved')}</option>
+</select>
+</td>`;
+tableBody.appendChild(tr);
+});
+}catch(err){
+console.error(err);
+tableBody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--danger);">${adminT("loadError")}</td></tr>`;
+}
+};
+
+window.updateStatus=async function(docId,newStatus){
+try{
+await updateDoc(doc(db,"complaints",docId),{status:newStatus});
+alert(`${adminT("updated")} ${docId}`);
+loadComplaints();
+}catch(err){
+console.error(err);
+alert(adminT("updateError"));
+}
+};
+</script>
+
+<div id="complaintModal" class="complaint-modal hidden">
+  <div class="complaint-modal-backdrop" onclick="closeComplaintDetails()"></div>
+  <div class="complaint-modal-card" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+    <div class="complaint-modal-head">
+      <div>
+        <h3 id="detailsTitle" data-i18n="detailsTitle">অভিযোগের বিস্তারিত</h3>
+        <p id="detailsId"></p>
+      </div>
+      <button class="modal-close" onclick="closeComplaintDetails()" aria-label="Close">×</button>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>আইডি & তারিখ</th>
-          <th>অভিযোগকারী</th>
-          <th>থানা & এলাকা</th>
-          <th>অপরাধের ধরণ</th>
-          <th>প্রমাণ (Image)</th>
-          <th>স্ট্যাটাস</th>
-          <th>অ্যাকশন</th>
-        </tr>
-      </thead>
-      <tbody id="complaintTable">
-        <tr><td colspan="7" style="text-align:center;">ডেটা লোড হচ্ছে...</td></tr>
-      </tbody>
-    </table>
+    <div id="complaintDetails" class="complaint-details-grid"></div>
   </div>
 </div>
 
-<!-- Firebase Module Script -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyC51gN9SmnbwGyLDNTRsLJ97z7PuyCXD5w",
-    authDomain: "cybersos-bd.firebaseapp.com",
-    projectId: "cybersos-bd",
-    storageBucket: "cybersos-bd.firebasestorage.app",
-    messagingSenderId: "767230879565",
-    appId: "1:767230879565:web:68d822679960bfac98b904",
-    measurementId: "G-BXE5VFPEXW"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Authentication Logic
-  window.checkAuth = function() {
-    const pass = document.getElementById('adminPass').value;
-    if(pass === "admin123") { // 🔑 আপনার সিক্রেট এডমিন পাসওয়ার্ড
-      document.getElementById('loginView').classList.add('hidden');
-      document.getElementById('dashboardView').classList.remove('hidden');
-      loadComplaints();
-    } else {
-      document.getElementById('loginErr').innerText = "❌ ভুল পাসওয়ার্ড!";
-    }
-  };
-
-  window.logout = function() {
-    location.reload();
-  };
-
-  // Load Complaints from Firestore
-  window.loadComplaints = async function() {
-    const tableBody = document.getElementById('complaintTable');
-    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">⏳ ফায়ারবেস থেকে ডাটা আনা হচ্ছে...</td></tr>`;
-
-    try {
-      const querySnapshot = await getDocs(collection(db, "complaints"));
-      tableBody.innerHTML = "";
-      document.getElementById('totalCount').innerText = querySnapshot.size;
-
-      if(querySnapshot.empty) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">এখনও কোনো অভিযোগ জমা পড়েনি।</td></tr>`;
-        return;
-      }
-
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const id = docSnap.id;
-
-        let badgeClass = data.status === "Pending" ? "badge-pending" : data.status === "Investigating" ? "badge-investigating" : "badge-resolved";
-        let imageLink = data.evidenceImageUrl && data.evidenceImageUrl.includes("http") 
-          ? `<a href="${data.evidenceImageUrl}" target="_blank" style="color:var(--primary); font-weight:bold;">🖼️ দেখুন</a>` 
-          : "নেই";
-
-        let tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>
-            <strong style="font-family:'IBM Plex Mono'; color:var(--primary);">${id}</strong><br>
-            <small style="color:#666;">${data.date || 'N/A'}</small>
-          </td>
-          <td>
-            <strong>${data.name}</strong><br>
-            <small>📞 ${data.phone}</small><br>
-            <small>NID: ${data.nid}</small>
-          </td>
-          <td>${data.thana}, ${data.district}</td>
-          <td>
-            <strong>${data.crimeType}</strong><br>
-            <small style="color:#555;">${data.description ? data.description.substring(0, 30) + '...' : ''}</small>
-          </td>
-          <td>${imageLink}</td>
-          <td><span class="badge ${badgeClass}">${data.status}</span></td>
-          <td>
-            <select onchange="updateStatus('${id}', this.value)">
-              <option value="Pending" ${data.status === 'Pending' ? 'selected' : ''}>Pending</option>
-              <option value="Investigating" ${data.status === 'Investigating' ? 'selected' : ''}>Investigating</option>
-              <option value="Resolved" ${data.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
-            </select>
-          </td>
-        `;
-        tableBody.appendChild(tr);
-      });
-    } catch(err) {
-      console.error(err);
-      tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--danger);">❌ ডাটা লোড করতে সমস্যা হয়েছে!</td></tr>`;
-    }
-  };
-
-  // Update Status in Firestore
-  window.updateStatus = async function(docId, newStatus) {
-    try {
-      await updateDoc(doc(db, "complaints", docId), {
-        status: newStatus
-      });
-      alert(`✅ রেফারেন্স ${docId}-এর স্ট্যাটাস পরিবর্তন করে '${newStatus}' করা হয়েছে!`);
-      loadComplaints();
-    } catch(err) {
-      console.error(err);
-      alert("❌ স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে!");
-    }
-  };
-</script>
 </body>
 </html>
