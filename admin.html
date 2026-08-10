@@ -46,6 +46,9 @@ th{background:#EFEFEF;color:var(--primary);font-weight:700}
 .details-btn:hover{background:var(--primary-dark)}
 @media(max-width:700px){.complaint-details-grid{grid-template-columns:1fr}.detail-box.full{grid-column:auto}.complaint-modal{padding:10px}}
 </style>
+<style id="status-update-fix-style">
+select[data-complaint-id]:disabled{opacity:.6;cursor:wait}
+</style>
 </head>
 <body>
 <div id="loginView" class="login-card">
@@ -195,7 +198,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape') closeComplaintDetai
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyC51gN9SmnbwGyLDNTRsLJ97z7PuyCXD5w",
@@ -248,7 +251,8 @@ tr.innerHTML=`
 <td>${imageLink}</td>
 <td><span class="badge ${badgeClass}">${displayFirebaseValue(data.status)}</span></td>
 <td>
-<select onchange="updateStatus('${id}',this.value)">
+<select data-complaint-id="${id}" data-previous-status="${displayFirebaseValue(data.status)}" onchange="updateStatus('${id}',this.value)">
+<option value="Pending" ${data.status==='Pending'?'selected':''}>${adminLang==='bn'?'অপেক্ষমান':'Pending'}</option>
 <option value="Submitted" ${data.status==='Submitted'?'selected':''}>${adminT('submitted')}</option>
 <option value="Initial Verification" ${data.status==='Initial Verification'?'selected':''}>${adminT('initial')}</option>
 <option value="Evidence Review" ${data.status==='Evidence Review'?'selected':''}>${adminT('evidenceReview')}</option>
@@ -266,14 +270,70 @@ tableBody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--da
 };
 
 window.updateStatus=async function(docId,newStatus){
-try{
-await updateDoc(doc(db,"complaints",docId),{status:newStatus});
-alert(`${adminT("updated")} ${docId}`);
-loadComplaints();
-}catch(err){
-console.error(err);
-alert(adminT("updateError"));
-}
+  const select=document.querySelector(`select[data-complaint-id="${CSS.escape(docId)}"]`);
+  const previous=select?select.dataset.previousStatus:"";
+  if(!newStatus || newStatus===previous) return;
+
+  if(!confirm(adminLang==='bn'
+    ? `এই অভিযোগের স্ট্যাটাস "${newStatus}" করা হবে। আপনি কি নিশ্চিত?`
+    : `Change this complaint status to "${newStatus}"?`)){
+    if(select && previous) select.value=previous;
+    return;
+  }
+
+  if(select) select.disabled=true;
+
+  try{
+    const complaintRef=doc(db,"complaints",docId);
+
+    // Save the status and a timestamp together.
+    await updateDoc(complaintRef,{
+      status:newStatus,
+      statusUpdatedAt:new Date().toISOString()
+    });
+
+    // Read it back so the UI only reports success when Firestore actually
+    // contains the new value.
+    const verifySnap=await getDoc(complaintRef);
+    if(!verifySnap.exists() || verifySnap.data().status!==newStatus){
+      throw new Error("STATUS_WRITE_VERIFICATION_FAILED");
+    }
+
+    if(select) select.dataset.previousStatus=newStatus;
+
+    const row=select?.closest("tr");
+    const badge=row?.querySelector(".badge");
+    if(badge){
+      badge.textContent=displayFirebaseValue(newStatus);
+      badge.className="badge "+(
+        newStatus==="Resolved" ? "badge-resolved" :
+        newStatus==="Investigating" ? "badge-investigating" :
+        "badge-pending"
+      );
+    }
+
+    alert(`${adminT("updated")} ${docId}`);
+    await loadComplaints();
+
+  }catch(err){
+    console.error("Status update failed:",err);
+
+    if(select && previous) select.value=previous;
+
+    let message=adminT("updateError");
+    if(err?.code==="permission-denied"){
+      message += adminLang==='bn'
+        ? "\n\nFirebase permission denied: Firestore Rules-এ update permission দিতে হবে।"
+        : "\n\nFirebase permission denied: the Firestore Rules must allow updates.";
+    }else if(err?.message==="STATUS_WRITE_VERIFICATION_FAILED"){
+      message += adminLang==='bn'
+        ? "\n\nFirestore-এ নতুন স্ট্যাটাস verify করা যায়নি।"
+        : "\n\nThe new status could not be verified in Firestore.";
+    }
+    alert(message);
+  }finally{
+    if(select) select.disabled=false;
+  }
 };
 </script>
 
